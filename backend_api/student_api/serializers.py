@@ -21,3 +21,8 @@ class StudentSerializer(serializers.ModelSerializer):
         if value <= 0:
             raise serializers.ValidationError("Age must be greater than 0.")
         return value
+
+
+
+class AIChatSerializer(serializers.Serializer):
+    message = serializers.CharField(required=True, allow_blank=False)

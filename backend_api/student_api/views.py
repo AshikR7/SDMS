@@ -1,8 +1,11 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status 
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import IntegrityError
 from .models import Student
 from .serializers import StudentSerializer
+from .serializers import AIChatSerializer
+from .services import get_student_assistant_response, get_student_context
 
 class StudentViewSet(viewsets.ModelViewSet):
     """
@@ -50,3 +53,18 @@ class StudentViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+class StudentAIAssistantView(APIView):
+    # No permissions.IsAuthenticated here — your assignment has no auth/user model.
+    # Add it back if you build auth later.
+
+    def post(self, request):
+        serializer = AIChatSerializer(data=request.data)
+        if serializer.is_valid():
+            user_message = serializer.validated_data['message']
+            context = get_student_context()
+            ai_response = get_student_assistant_response(user_message, context)
+            return Response({'message': user_message, 'response': ai_response})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
