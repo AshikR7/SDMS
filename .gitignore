@@ -27,3 +27,9 @@ staticfiles/
 *.backup
 *.pgsql
 pgdata/  
+
+
+
+
+node_modules/
+dist/
